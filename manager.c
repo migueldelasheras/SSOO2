@@ -42,7 +42,7 @@ int main(){
     
     }
 
-    
+    //sleep(10);
     
     int pClass; //tipo de proceso creado (B o C)
 
