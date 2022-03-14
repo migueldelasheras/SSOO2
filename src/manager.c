@@ -19,21 +19,23 @@
 pid_t pid1,pid2,pid3; //PROCESOS A,B Y C
 
 void manejadorInt(int sig);
-void manejadorDemon(int sig);
+void lanzadorDemon();
 
 int main(){
 
-    //Manejadores de las señales SIGINT Y SIGALRM
+    //Manejador de la señal SIGINT
     signal(SIGINT,manejadorInt);
-    signal(SIGALRM,manejadorDemon);
-    manejadorDemon(SIGALRM);
+
+    //Se lanza el proceso demonio
+    lanzadorDemon();
 
     //Creación del fichero log.txt para el seguimiento de la ejecución
     FILE *log = fopen("log.txt","wr");
     fputs("******** Log del sistema ********\n",log);
 
-    char *const arg_list[] = {NULL}; //mirar lo de const
+    char *const arg_list[] = {NULL};
 
+    //Creación del proceso pa
     pid1 = fork();
 
     switch (pid1)
@@ -57,7 +59,7 @@ int main(){
     
     }
     
-    //Creación de la tuberia Pc-> manager
+    //Creación de la tuberia Pc -> manager
     int tuberiaPcManager[2]; 
     pipe(tuberiaPcManager);
     char wr_tuberiaPC[256];
@@ -90,7 +92,8 @@ int main(){
             }
             
         }
-        //almacenamiento de los pids de los procesos hijos(Pb y Pc) creados
+
+        //Almacenamiento de los pids de los procesos hijos(Pb y Pc) creados
         if (i==0)
         {
             pid2 = pid;
@@ -99,7 +102,7 @@ int main(){
         }
          
     }
-
+    
     //Se espera a la finalización del proceso Pb
     waitpid(pid2,NULL,0);
     fputs("Copia de modelos de examen, finalizada.\n",log);
@@ -113,25 +116,20 @@ int main(){
     fputs("La nota media de la clase es: ",log);
     fputs(buffer, log);
     fputs("\nFIN DEL PROGRAMA",log);
+    fclose(log);
     
 }
 
 //Manejador de la señal "SIGINT"(Ctrl+C)
 void manejadorInt(int sig){
 
-    printf("final del proceso");
+    printf("Finalizando los procesos creados...\n");
+    kill(pid1,SIGKILL);
+    kill(pid2,SIGKILL);
+    kill(pid3,SIGKILL);
     
-    char *const arg_list[] = {NULL}; 
-    
-
+    char *const arg_list[] = {NULL};
     pid_t pid = fork();
-
-/*
-    char pidA[2],pidB[2],pidC[2];
-    sprintf(pidA,"%d",pid1);
-    sprintf(pidB,"%d",pid2);
-    sprintf(pidC,"%d",pid3);
-*/
 
     if (pid==-1)
     {
@@ -148,10 +146,24 @@ void manejadorInt(int sig){
 
 }
 
-void manejadorDemon(int sig){
-    
-    alarm(6);
-    
+//Función que lanzará el proceso Demonio en segundo plano al comienzo de la ejecución
+void lanzadorDemon(){
 
+    pid_t pid = fork();
+    char *const arg_list[] = {NULL}; 
+
+    if (pid==-1)
+    {
+        fprintf(stderr,"No se ha podido crear el proceso demonio");
+        exit(EXIT_FAILURE);
+    }
+    if (pid==0)
+    {
+
+        execve("./demonio",arg_list,NULL);
+        fprintf(stderr,"Se ha producido un error en el proceso Pd");
+        exit(EXIT_FAILURE);
+    }
+    
 }
 
