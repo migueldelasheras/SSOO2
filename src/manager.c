@@ -53,12 +53,11 @@ int main(){
     
     default:
         
-        wait(NULL);
+        waitpid(pid1,NULL,0);
         fputs("Creación de directorios finalizada.\n",log);
         break;
     
     }
-    
     //Creación de la tuberia Pc -> manager
     int tuberiaPcManager[2]; 
     pipe(tuberiaPcManager);
@@ -102,7 +101,6 @@ int main(){
         }
          
     }
-    
     //Se espera a la finalización del proceso Pb
     waitpid(pid2,NULL,0);
     fputs("Copia de modelos de examen, finalizada.\n",log);
@@ -124,9 +122,9 @@ int main(){
 void manejadorInt(int sig){
 
     printf("Finalizando los procesos creados...\n");
-    kill(pid1,SIGKILL);
-    kill(pid2,SIGKILL);
-    kill(pid3,SIGKILL);
+    if(pid1!=0) kill(pid1,SIGKILL);
+    if(pid2!=0) kill(pid2,SIGKILL);
+    if(pid3!=0) kill(pid3,SIGKILL);
     
     char *const arg_list[] = {NULL};
     pid_t pid = fork();

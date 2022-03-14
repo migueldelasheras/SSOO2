@@ -10,14 +10,12 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <unistd.h>
-//#include <sys/types.h>
-//#include <sys/wait.h>
 #include <string.h>
 #include <sys/stat.h>
 
 
 int main(){
-    
+
     //Se abre el archivo estudiantes.txt para su lectura
     char *filename = "estudiantes.txt";
     FILE *fp= fopen(filename,"r");
@@ -29,6 +27,7 @@ int main(){
 
     //directorio general donde estarán todos los directorios de los estudiantes
     char* directorio="estudiantes/";
+    mkdir(directorio,S_IRWXU);
     //DNI del alumno y por tanto nombre del directorio de dicho alumno
     char* dirAlumno; 
 
@@ -46,7 +45,6 @@ int main(){
 
         mkdir(dirAlumno,S_IRWXU);
     }
-    
     fclose(fp);
     
 }
