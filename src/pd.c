@@ -14,7 +14,6 @@ int main(){
     FILE *log = fopen("log.txt","w");
     fputs("Se ha producido una interrupcion voluntaria ordenada por el usuario\n",log);
     fclose(log);
-
     char *const arg_list[] = {"/bin/bash","-c","rm -r estudiantes",NULL};
     execve("/bin/bash",arg_list,NULL);
     

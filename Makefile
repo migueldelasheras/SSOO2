@@ -3,10 +3,7 @@ DIREST := estudiantes/
 
 CC := gcc
 
-all : dirs manager pa pb pc pd demonio
-
-dirs:
-	mkdir -p $(DIREST)
+all : manager pa pb pc pd demonio
 
 manager: 
 	$(CC) -o manager $(DIRSRC)manager.c
